@@ -2,6 +2,7 @@ import numpy as np
 import os
 import pandas as pd
 from ConceptsExtractor import *
+from ConceptMidwife import *
 def PoolofKnowledge():
     Parameters=pd.read_csv('Parameters.csv',index_col=0)
     TextFolder=Parameters['Value']['TextFolder']
@@ -12,4 +13,5 @@ def PoolofKnowledge():
     if os.path.exists(PoolofKnowledgeRute)==False:
         os.mkdir(PoolofKnowledgeRute)
     textName=TextFolder+'/'+TextName
-    print(ConceptsExtractor(textName,startKey,endKey))
+    ConceptsList=ConceptsExtractor(textName,startKey,endKey)
+    ConceptMidwife(ConceptsList,PoolofKnowledgeRute)    
