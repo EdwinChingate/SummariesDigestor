@@ -10,6 +10,6 @@ def AllConcepts(TextLines,startKey="[[",endKey="]]"):
         UpdatedLine='- '+ConceptLine[1]
         if len(Concepts)>0:
             ConceptsList.append([Concepts,UpdatedLine])
-    ConceptsDB=set(ConceptsDB)
-    print(ConceptsDB)
-    return ConceptsList
+    ConceptsDB=list(set(ConceptsDB))
+    ConceptPack=[ConceptsDB,ConceptsList]
+    return ConceptPack
