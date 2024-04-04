@@ -1,7 +1,5 @@
-def Phaenarete(ConceptLine,PoolofKnowledgeRute):
-    Concepts=ConceptLine[0]
-    line=ConceptLine[1]
-    for concept in Concepts:
-        conceptFileName=PoolofKnowledgeRute+'/'+concept+'.md'
+def Phaenarete(concept,TextLines,LineswithconceptLoc,conceptFileName):    
+    for linecount in LineswithconceptLoc:    
+        line=TextLines[int(linecount)]
         with open(conceptFileName,'a') as ConceptFile:
-            ConceptFile.write(line)   
+            ConceptFile.write(line)  

@@ -1,9 +1,9 @@
 import numpy as np
 import os
 import pandas as pd
-from ConceptsExtractor import *
-from ReferenceMidwife import *
 from ConceptMidwife import *
+from WriteSummary import *
+from UpdateSummary import *
 def PoolofKnowledge():
     Parameters=pd.read_csv('Parameters.csv',index_col=0)
     TextFolder=Parameters['Value']['TextFolder']
@@ -14,8 +14,6 @@ def PoolofKnowledge():
     if os.path.exists(PoolofKnowledgeRute)==False:
         os.mkdir(PoolofKnowledgeRute)
     textName=TextFolder+'/'+TextName
-    ConceptPack=ConceptsExtractor(textName,startKey,endKey)
-    ConceptsList=ConceptPack[1]
-    ConceptsDB=ConceptPack[0]    
-    ReferenceMidwife(ConceptsDB,TextName,PoolofKnowledgeRute)
-    ConceptMidwife(ConceptsList,PoolofKnowledgeRute)    
+    TextLines=UpdateSummary()
+    WriteSummary(textName,TextLines)
+    ConceptMidwife(textName,TextName,PoolofKnowledgeRute)  

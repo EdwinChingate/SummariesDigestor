@@ -1,7 +1,14 @@
 from AllConcepts import *
+from ReadSummary import *
+from FillingTextDF import *
 def ConceptsExtractor(textName,startKey="[[",endKey="]]"):
-    Text = open(textName, "r")
-    TextLines=Text.readlines()
-    Text.close()
-    ConceptPack=AllConcepts(TextLines,startKey="[[",endKey="]]")
+    TextLines=ReadSummary(textName)
+    ConceptPack=AllConcepts(TextLines,textName,startKey="[[",endKey="]]")
+    linesNumber=ConceptPack[2]
+    ConceptsList=ConceptPack[1]
+    ConceptsDB=ConceptPack[0]
+    TextDF=FillingTextDF(ConceptsDB,ConceptsList,linesNumber)
+    TextDF=TextDF.sort_index()
+    TextDF.to_excel('TextMatrix.xlsx')
+    TextLines=ConceptPack[3]
     return ConceptPack
