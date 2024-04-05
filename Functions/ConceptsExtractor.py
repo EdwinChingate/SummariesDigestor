@@ -1,9 +1,9 @@
 from AllConcepts import *
 from ReadSummary import *
 from FillingTextDF import *
-def ConceptsExtractor(textName,startKey="[[",endKey="]]"):
+def ConceptsExtractor(textName,startKey="[[",endKey="]]",Write=True):
     TextLines=ReadSummary(textName)
-    ConceptPack=AllConcepts(TextLines,textName,startKey="[[",endKey="]]")
+    ConceptPack=AllConcepts(TextLines,textName,startKey,endKey,Write)
     linesNumber=ConceptPack[2]
     ConceptsList=ConceptPack[1]
     ConceptsDB=ConceptPack[0]

@@ -1,7 +1,7 @@
 from KeyConcepts import *
 from WriteSummary import *
 import numpy as np
-def AllConcepts(TextLines,textName,startKey="[[",endKey="]]"):    
+def AllConcepts(TextLines,textName,startKey="[[",endKey="]]",Write=True):    
     ConceptsList=[]
     ConceptsDB=[]
     for linecount in np.arange(len(TextLines)):   
@@ -17,5 +17,6 @@ def AllConcepts(TextLines,textName,startKey="[[",endKey="]]"):
         linecount=+1        
     ConceptsDB=list(set(ConceptsDB))
     ConceptPack=[ConceptsDB,ConceptsList,len(TextLines),TextLines] 
-    WriteSummary(textName,TextLines)
+    if Write:
+        WriteSummary(textName,TextLines)
     return ConceptPack
