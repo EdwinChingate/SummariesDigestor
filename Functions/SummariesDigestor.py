@@ -23,7 +23,7 @@ def SummariesDigestor():
     conceptsPoolDF['Summary']=0
     conceptsPoolDF.loc[ConceptsDB,'Summary']=1
     conceptsPoolDF.loc[conceptsPool,'Pool']=1
-    conceptsPoolDF['New']=1-conceptsPoolDF['Pool']*conceptsPoolDF['Summary']
+    conceptsPoolDF['New']=(1-conceptsPoolDF['Pool']*conceptsPoolDF['Summary'])*conceptsPoolDF['Summary']
     conceptsPoolDF['Update']=0
     conceptsPoolDF=conceptsPoolDF.sort_index()
     conceptsPoolDF.to_excel('EvaluateConcepts.xlsx')
