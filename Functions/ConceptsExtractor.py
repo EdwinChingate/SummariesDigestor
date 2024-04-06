@@ -4,11 +4,11 @@ from FillingTextDF import *
 def ConceptsExtractor(textName,startKey="[[",endKey="]]",Write=True):
     TextLines=ReadSummary(textName)
     ConceptPack=AllConcepts(TextLines,textName,startKey,endKey,Write)
-    linesNumber=ConceptPack[2]
-    ConceptsList=ConceptPack[1]
-    ConceptsDB=ConceptPack[0]
-    TextDF=FillingTextDF(ConceptsDB,ConceptsList,linesNumber)
-    TextDF=TextDF.sort_index()
-    TextDF.to_excel('TextMatrix.xlsx')
-    TextLines=ConceptPack[3]
+    if Write:
+        linesNumber=ConceptPack[2]
+        ConceptsList=ConceptPack[1]
+        ConceptsDB=ConceptPack[0]
+        TextDF=FillingTextDF(ConceptsDB,ConceptsList,linesNumber)
+        TextDF=TextDF.sort_index()
+        TextDF.to_excel('TextMatrix.xlsx')
     return ConceptPack
