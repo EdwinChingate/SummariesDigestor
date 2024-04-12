@@ -10,7 +10,7 @@ def ProtoSentencesNetwork(mapName='ProtoSentenceMap',netName='ProtoSentenceNet')
     Network['ProtoSentence']=Network['source']+'|'+Network['target']
     ConceptsDB=list(set(list(Network['source'])+list(Network['target'])))
     Links=[]
-    for concept in ConceptsDB[:10]:
+    for concept in ConceptsDB:
         SentencesLoc=(Network['source']==concept)|(Network['target']==concept)
         links=list(Network[SentencesLoc]['ProtoSentence'])
         Links=LinkSentences(Links,links)
