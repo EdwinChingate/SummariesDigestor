@@ -2,7 +2,7 @@ import json
 import networkx as nx
 from pathlib import Path
 
-def create_initial_canvas(G, metric="degree", N=20, canvas_path="initial.canvas",
+def create_initial_canvas(G,QuestionsConceptsDF, metric="degree", N=20, canvas_path="initial.canvas",
                           card_width=420, card_height=180):
     # --- 1. Compute metric ---
     if metric == "degree":
@@ -16,7 +16,6 @@ def create_initial_canvas(G, metric="degree", N=20, canvas_path="initial.canvas"
 
     # --- 2. Select top N nodes ---
     top_nodes = sorted(scores, key=scores.get, reverse=True)[:N]
-
     # --- 3. Prepare layout (grid) ---
     cols = int(N**0.5)
     spacing_x = card_width + 40
@@ -25,8 +24,8 @@ def create_initial_canvas(G, metric="degree", N=20, canvas_path="initial.canvas"
     for idx, node in enumerate(top_nodes):
         row, col = divmod(idx, cols)
         x = col * spacing_x
-        y = row * spacing_y
-        text = G.nodes[node].get("text", str(node))
+        y = row * spacing_y        
+        text = str(QuestionsConceptsDF.iloc[node].name)
         nodes_json.append({
             "type": "text",
             "id": str(node),
