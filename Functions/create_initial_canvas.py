@@ -1,29 +1,26 @@
 import json
 import networkx as nx
 from pathlib import Path
+import numpy as np
+from scores_metric import *
 
-def create_initial_canvas(G,QuestionsConceptsDF, metric="degree", N=20, canvas_path="initial.canvas",
-                          card_width=420, card_height=180):
-    # --- 1. Compute metric ---
-    if metric == "degree":
-        scores = dict(G.degree())
-    elif metric == "pagerank":
-        scores = nx.pagerank(G)
-    elif metric == "betweenness":
-        scores = nx.betweenness_centrality(G)
-    else:
-        raise ValueError(f"Unknown metric: {metric}")
-
-    # --- 2. Select top N nodes ---
-    top_nodes = sorted(scores, key=scores.get, reverse=True)[:N]
-    # --- 3. Prepare layout (grid) ---
-    cols = int(N**0.5)
-    spacing_x = card_width + 40
-    spacing_y = card_height + 40
+def create_initial_canvas(G,
+                          QuestionsConceptsDF, 
+                          MetricV=["degree"], 
+                          N=20, 
+                          canvas_path="initial.canvas",
+                          card_width=420, 
+                          card_height=90,
+                          spacing=80):
+    canvas_nodes=scores_metric(G=G, MetricV=MetricV, N=N)
+    spacing_x = card_width+spacing
+    spacing_y = card_height+spacing
     nodes_json = []
-    for idx, node in enumerate(top_nodes):
-        row, col = divmod(idx, cols)
-        x = col * spacing_x
+    row=0
+    for node in canvas_nodes:
+        rng = np.random.default_rng()
+        random_float = rng.random()
+        x = spacing_x+card_width*random_float
         y = row * spacing_y        
         text = str(QuestionsConceptsDF.iloc[node].name)
         nodes_json.append({
@@ -35,6 +32,7 @@ def create_initial_canvas(G,QuestionsConceptsDF, metric="degree", N=20, canvas_p
             "width": card_width,
             "height": card_height
         })
+        row+=1
 
     # --- 4. Empty edges initially ---
     data = {
@@ -44,5 +42,5 @@ def create_initial_canvas(G,QuestionsConceptsDF, metric="degree", N=20, canvas_p
 
     # --- 5. Save canvas ---
     Path(canvas_path).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(f"[ok] Canvas with top {N} '{metric}' nodes saved to {canvas_path}")
+    #print(f"[ok] Canvas with top {N} '{metric}' nodes saved to {canvas_path}")
 
