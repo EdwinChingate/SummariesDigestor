@@ -1,3 +1,5 @@
+import numpy as np
+
 def norm(a):
     a_min, a_max = float(a.min()), float(a.max())
     if a_max - a_min < 1e-12:

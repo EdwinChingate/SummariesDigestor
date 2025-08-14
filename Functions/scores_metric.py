@@ -1,9 +1,9 @@
 import networkx as nx
 import numpy as np
+
 def scores_metric(G, MetricV=["degree"], N=20):
     canvas_nodes=[]
     for metric in MetricV:
-        print(metric)
         if metric == "degree":
             scores=dict(G.degree())
         elif metric == "pagerank":

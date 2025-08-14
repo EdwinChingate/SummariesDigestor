@@ -1,4 +1,3 @@
-import networkx as nx
 def steiner_subtree_on_tree(G, terminals):
     """
     Exact Steiner subtree on a tree:
@@ -18,4 +17,3 @@ def steiner_subtree_on_tree(G, terminals):
                 T.remove_node(n)
         prunable = [n for n in list(T.nodes) if T.degree(n) <= 1 and n not in term_set]
     return T
-
