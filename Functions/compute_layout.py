@@ -8,7 +8,7 @@ def compute_layout(G, layout="spring", seed=42, **kwargs):
     if layout == "spring":
         return nx.spring_layout(G, seed=seed, **kwargs)
     if layout == "kamada_kawai":
-        return nx.kamada_kawai_layout(G, **kwargs)
+        return nx.kamada_kawai_layout(G, scale=100,**kwargs)
     if layout == "spectral":
         return nx.spectral_layout(G, **kwargs)
     if layout == "fr":

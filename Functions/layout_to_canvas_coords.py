@@ -1,7 +1,7 @@
 import numpy as np
 from norm import *
 
-def layout_to_canvas_coords(pos, card_width=420, card_height=120, padding=120):
+def layout_to_canvas_coords(pos, card_width=500, card_height=120, padding=120):
     """
     Map layout coords -> Obsidian Canvas pixel coords.
     - Normalizes x,y to a positive pixel range.
