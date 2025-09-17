@@ -7,9 +7,11 @@ from CanvasCoordinates import *
 from orient_layout_by_diameter import *
 from layout_to_canvas_coords import *
 from build_edges_undirected_perp import *
+from LeavesOneWay import *
 from branches_from_the_heart import *
+from BranchExpansion import *
 
-def create_initial_canvas(G,
+def create_initial_canvas(MaximumSimilarityTree,
                           QuestionsConceptsDF, 
                           MetricV=["degree"], 
                           N=20, 
@@ -17,45 +19,42 @@ def create_initial_canvas(G,
                           psi=0.3, 
                           card_width=500, 
                           card_height=120, 
-                          padding=50):
-    canvas_nodes=scores_metric(G=G, 
+                          padding=50,
+                          Develop=0):
+    canvas_nodes=scores_metric(G=MaximumSimilarityTree, 
                                MetricV=MetricV,
                                N=N)
-    canvas_nodes_tree=steiner_subtree_on_tree(G=G,
+    canvas_nodes_tree=steiner_subtree_on_tree(G=MaximumSimilarityTree,
                                               terminals=canvas_nodes)
     spacing_x = card_width+padding
     spacing_y = card_height+padding
     nodes_json = []
     edges_json = []
-    LittleTree = G.subgraph(canvas_nodes_tree.nodes)  # induced subgraph
-    Branches_and_Heart=branches_from_the_heart(LittleTree)
-    #return H
-    # H = ... (your Steiner or induced subgraph)
+    LittleTree= MaximumSimilarityTree.subgraph(canvas_nodes_tree.nodes)  # induced subgraph
+    Branches_Heart_and_Leaves=branches_from_the_heart(Tree=LittleTree,
+                                                      MaximumSimilarityTree=MaximumSimilarityTree)
+    Leaves=Branches_Heart_and_Leaves[2]
+    Heart=Branches_Heart_and_Leaves[1]
     nodes_to_render = list(LittleTree.nodes())
-    
-    # compute layout & convert to canvas coords
-    #pos0 = compute_layout(H, layout="kamada_kawai", seed=42)  # or 'kamada_kawai'
-    
-    pos0=CanvasCoordinates(Branches_and_Heart=Branches_and_Heart,
+    pos=CanvasCoordinates(Branches_Heart_and_Leaves=Branches_Heart_and_Leaves,
                            psi=psi,
                            card_width=card_width,
                            card_height=card_height, 
                            padding=padding)
-    pos1 = pos0#orient_layout_by_diameter(H, pos0, point_up=True)
-    #return 0
-    #return pos0
-    #canvas_xy = layout_to_canvas_coords(
-    #    pos1,
-    #    card_width=card_width,
-    #    card_height=card_height,
-    #    padding=padding
-    #)
-    canvas_xy=pos0
-    nodes_json = []    
+    canvas_xy=pos
+    nodes_json = []  
+    LeavesOnewayMatrix=LeavesOneWay(MaximumSimilarityTree=MaximumSimilarityTree,
+                                    Heart=Heart,
+                                    Leaves=Leaves)   
+
     for node in nodes_to_render:
         text = str(QuestionsConceptsDF.iloc[int(node)].name) if str(node).isdigit() else str(node)
         x, y         = canvas_xy[node]
-        #print(x, y )
+        ExtraText=''
+        if node in Leaves:            
+            minL,maxL,NBranches=BranchExpansion(node=node,
+                                                LeavesPathwayMatrix=LeavesOnewayMatrix)
+            ExtraText='\nmin: '+str(minL)+'\tmax: '+str(maxL)+'\nBranches: '+str(NBranches)+'\nDevelop: '+str(Develop)
         if node in list(canvas_nodes):
             color='5'
         else:
@@ -63,7 +62,7 @@ def create_initial_canvas(G,
         nodes_json.append({
             "type": "text",
             "id": str(node),
-            "text": text+' ('+str(node)+')',
+            "text":'id: '+str(node)+'\n'+ text+ExtraText,
             "x": int(x),
             "y": int(y),
             "width": card_width,
@@ -76,4 +75,3 @@ def create_initial_canvas(G,
     data = {"nodes": nodes_json, "edges": edges_json}
 
     Path(canvas_path).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
-

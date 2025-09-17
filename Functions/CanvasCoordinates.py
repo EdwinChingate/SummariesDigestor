@@ -1,12 +1,12 @@
 import numpy as np
 from BranchCoordinates import *
-def CanvasCoordinates(Branches_and_Heart,
+def CanvasCoordinates(Branches_Heart_and_Leaves,
                       psi=0.3,
                       card_width=500,
                       card_height=120, 
                       padding=120):
-    Branches=Branches_and_Heart[0]
-    Heart=Branches_and_Heart[1]
+    Branches=Branches_Heart_and_Leaves[0]
+    Heart=Branches_Heart_and_Leaves[1]
     Nbranches=len(Branches)
     algleConverter=float(2*np.pi/Nbranches)
     DictCanvasCoordinates={Heart: np.zeros(2)}
