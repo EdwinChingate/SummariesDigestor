@@ -1,4 +1,5 @@
 import json
+import pandas as pd
 import networkx as nx
 from pathlib import Path
 from scores_metric import *
@@ -10,12 +11,15 @@ from build_edges_undirected_perp import *
 from LeavesOneWay import *
 from branches_from_the_heart import *
 from BranchExpansion import *
+from FirstEntryLogFile import *
 
 def create_initial_canvas(MaximumSimilarityTree,
                           QuestionsConceptsDF, 
+                          Fraction_of_Questions=0.2,
                           MetricV=["degree"], 
                           N=20, 
-                          canvas_path="initial.canvas",
+                          routeCanvas="initial.canvas",
+                          routeLog="initial.xlsx",
                           psi=0.3, 
                           card_width=500, 
                           card_height=120, 
@@ -35,7 +39,7 @@ def create_initial_canvas(MaximumSimilarityTree,
                                                       MaximumSimilarityTree=MaximumSimilarityTree)
     Leaves=Branches_Heart_and_Leaves[2]
     Heart=Branches_Heart_and_Leaves[1]
-    nodes_to_render = list(LittleTree.nodes())
+    nodes_to_render= list(LittleTree.nodes())
     pos=CanvasCoordinates(Branches_Heart_and_Leaves=Branches_Heart_and_Leaves,
                            psi=psi,
                            card_width=card_width,
@@ -54,7 +58,7 @@ def create_initial_canvas(MaximumSimilarityTree,
         if node in Leaves:            
             minL,maxL,NBranches=BranchExpansion(node=node,
                                                 LeavesPathwayMatrix=LeavesOnewayMatrix)
-            ExtraText='\nmin: '+str(minL)+'\tmax: '+str(maxL)+'\nBranches: '+str(NBranches)+'\nDevelop: '+str(Develop)
+            ExtraText='\nmin: '+str(minL)+'\tmax: '+str(maxL)+'\nBranches: '+str(NBranches)
         if node in list(canvas_nodes):
             color='5'
         else:
@@ -74,4 +78,7 @@ def create_initial_canvas(MaximumSimilarityTree,
 
     data = {"nodes": nodes_json, "edges": edges_json}
 
-    Path(canvas_path).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    Path(routeCanvas).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    StatusDF=FirstEntryLogFile(LittleTree=LittleTree,MaximumSimilarityTree=MaximumSimilarityTree,routeLog=routeLog,Fraction_of_Questions=Fraction_of_Questions)
+    return StatusDF
