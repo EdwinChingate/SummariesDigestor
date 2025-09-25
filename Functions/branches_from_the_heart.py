@@ -13,7 +13,7 @@ def branches_from_the_heart(Tree,MaximumSimilarityTree='',Heart=-1):
         NodesDegreeFullTree=np.array(itemgetter(*nodes)(MaximumSimilarityTree.degree))
         LeavesSetLoc=np.where(NodesDegreeFullTree!=2)[0]
         LeavesSet=set(nodes[LeavesSetLoc].tolist())    
-        Leaves=np.array(list((LeavesSet|leaves)-set([Heart])))
+        Leaves=np.array(list((LeavesSet|leaves)))
     else:
         Leaves=np.array(list(leaves))
     Branches_Heart_and_Leaves=[Branches,Heart,Leaves]    

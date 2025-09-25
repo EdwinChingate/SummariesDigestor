@@ -19,18 +19,20 @@ def create_initial_canvas(MaximumSimilarityTree,
                           MetricV=["degree"], 
                           N=20, 
                           routeCanvas="initial.canvas",
-                          routeLog="initial.xlsx",
                           psi=0.3, 
                           card_width=500, 
                           card_height=120, 
                           padding=50,
-                          Develop=0):
+                          Develop=0,
+                          colorsPalette='Colors.csv'):
+    routeLog=routeCanvas.replace('.canvas','.xlsx')
     canvas_nodes=scores_metric(G=MaximumSimilarityTree, 
                                MetricV=MetricV,
                                N=N)
     canvas_nodes_tree=steiner_subtree_on_tree(G=MaximumSimilarityTree,
                                               terminals=canvas_nodes)
     spacing_x = card_width+padding
+    ColorsDF=pd.read_csv(colorsPalette,index_col=0)
     spacing_y = card_height+padding
     nodes_json = []
     edges_json = []
@@ -50,35 +52,64 @@ def create_initial_canvas(MaximumSimilarityTree,
     LeavesOnewayMatrix=LeavesOneWay(MaximumSimilarityTree=MaximumSimilarityTree,
                                     Heart=Heart,
                                     Leaves=Leaves)   
+    minL_list=[]
+    maxL_list=[]
 
     for node in nodes_to_render:
+        ExpandingPotential=0
         text = str(QuestionsConceptsDF.iloc[int(node)].name) if str(node).isdigit() else str(node)
         x, y         = canvas_xy[node]
         ExtraText=''
+        minL,maxL,NBranches=[0,0,0]
+        if node in list(canvas_nodes):
+            color=ColorsDF.iloc[0].name
+        else:
+            color=ColorsDF.iloc[2].name      
+        color_background=ColorsDF['Complement'][color]
         if node in Leaves:            
             minL,maxL,NBranches=BranchExpansion(node=node,
                                                 LeavesPathwayMatrix=LeavesOnewayMatrix)
+            minL_list.append(minL)
+            maxL_list.append(maxL)
             ExtraText='\nmin: '+str(minL)+'\tmax: '+str(maxL)+'\nBranches: '+str(NBranches)
-        if node in list(canvas_nodes):
-            color='5'
-        else:
-            color='6'
+            color_background="#000"
         nodes_json.append({
             "type": "text",
             "id": str(node),
+            "layer": 0,
+            "branches":NBranches,
+            "min":minL,
+            "max":maxL,
+            "heart":Heart,
             "text":'id: '+str(node)+'\n'+ text+ExtraText,
             "x": int(x),
             "y": int(y),
             "width": card_width,
             "height": card_height,
-            "color": color
+            "default_color":color,
+            "color": color_background
         })
-
+        nodes_json.append({
+            "type": "group",
+            "id": str(node)+'G',
+            "x": int(x)-padding*0.3,
+            "y": int(y)-padding*0.3,            
+            "width": card_width+padding*0.6,
+            "height": card_height+padding*0.6,
+            "color": color
+        })        
+        
     edges_json =build_edges_undirected_perp(LittleTree, nodes_json, card_w=card_width, card_h=card_height)
 
     data = {"nodes": nodes_json, "edges": edges_json}
 
     Path(routeCanvas).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
-    StatusDF=FirstEntryLogFile(LittleTree=LittleTree,MaximumSimilarityTree=MaximumSimilarityTree,routeLog=routeLog,Fraction_of_Questions=Fraction_of_Questions)
+    StatusDF=FirstEntryLogFile(LittleTree=LittleTree,
+                               MaximumSimilarityTree=MaximumSimilarityTree,
+                               routeLog=routeLog,
+                               Leaves=Leaves,
+                               minL_list=minL_list,
+                               maxL_list=maxL_list,
+                               Fraction_of_Questions=Fraction_of_Questions)
     return StatusDF

@@ -7,8 +7,6 @@ def LeavesOneWay(MaximumSimilarityTree,Heart,Leaves):
     LeavesOnewayMatrix=np.zeros((NRows,NRows))
     for row in np.arange(NRows):
         PossibleLeaf=LeavesPathwayMatrix[row,Leaves].copy()
-        SortLocPossibleLeaf=np.argsort(PossibleLeaf)
-        SortPossibleLeaf=PossibleLeaf[SortLocPossibleLeaf]
         PositiveLoc=np.where(PossibleLeaf>0)[0]
         if len(PositiveLoc)>0:
             Leaves_in_Branch=PossibleLeaf[PositiveLoc]
